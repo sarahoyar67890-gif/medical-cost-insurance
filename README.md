@@ -1,14 +1,26 @@
-# Insurance Cost Prediction
+# Medical Insurance Cost Prediction
 
 This project predicts medical insurance costs using Machine Learning.
 
+## Dataset
+Insurance dataset (Kaggle)
+
+## Model Used
+Gradient Boosting Regressor
+
 ## Features
-- Age, BMI, smoker status, region
-- Gradient Boosting model
-- Streamlit web app
+- Age
+- Sex
+- BMI
+- Children
+- Smoker
+- Region
 
-## Tech Stack
-Python, Pandas, Scikit-learn, Streamlit
+## Performance
+- R2 Score: ~0.83
+- MAE: ~2800
 
-## Run App
+## How to run
+
+pip install -r requirements.txt
 streamlit run app.py
