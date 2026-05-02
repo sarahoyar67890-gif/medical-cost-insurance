@@ -1,26 +1,50 @@
 import streamlit as st
 import numpy as np
 import pickle
+import pandas as pd
 
 # load model
 with open("insurance_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-st.title("Insurance Cost Prediction")
+st.title("Insurance Cost Prediction 💰")
 
 # inputs
 age = st.number_input("Age")
-sex = st.selectbox("Sex (0 = male, 1 = female)", [0, 1])
 bmi = st.number_input("BMI")
 children = st.number_input("Children", step=1)
-smoker = st.selectbox("Smoker (0 = yes, 1 = no)", [0, 1])
-region = st.selectbox("Region (0=southeast,1=southwest,2=northeast,3=northwest)", [0, 1, 2, 3])
 
-# prediction button
+sex = st.selectbox("Sex", ["male", "female"])
+smoker = st.selectbox("Smoker", ["yes", "no"])
+region = st.selectbox("Region", ["southeast", "southwest", "northeast", "northwest"])
+
+# prediction
 if st.button("Predict"):
-    input_data = np.array([[age, sex, bmi, children, smoker, region]])
+
+    # 🔥 recreate EXACT feature engineering from training
+    input_dict = {
+        "age": age,
+        "bmi": bmi,
+        "children": children,
+
+        "sex_male": 1 if sex == "male" else 0,
+
+        "smoker_yes": 1 if smoker == "yes" else 0,
+
+        "region_northwest": 1 if region == "northwest" else 0,
+        "region_southeast": 1 if region == "southeast" else 0,
+        "region_southwest": 1 if region == "southwest" else 0,
+
+        # feature engineering you added in training
+        "smoker_bmi": (1 if smoker == "yes" else 0) * bmi
+    }
+
+    # convert to DataFrame (IMPORTANT ❗)
+    input_data = pd.DataFrame([input_dict])
+
+    # ensure column order matches training
+    input_data = input_data.reindex(columns=model.feature_names_in_, fill_value=0)
+
     prediction = model.predict(input_data)
-    
-    st.write("Predicted Insurance Cost (USD):")
-    st.write(prediction[0])
-    st.write(model.n_features_in_)
+
+    st.success(f"Predicted Insurance Cost: ${prediction[0]:.2f}")
