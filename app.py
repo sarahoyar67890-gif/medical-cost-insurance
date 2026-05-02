@@ -23,3 +23,4 @@ if st.button("Predict"):
     
     st.write("Predicted Insurance Cost (USD):")
     st.write(prediction[0])
+    st.write(model.n_features_in_)
